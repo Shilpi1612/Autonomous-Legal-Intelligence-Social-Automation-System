@@ -1,9 +1,6 @@
 # ⚖️ Autonomous Legal Intelligence & Social Automation Engine
 ### *End-to-End Agentic Workflow: From Judicial Trends to Brand-Compliant Content*
 
-<p align="center">
-  <img src="https://capsule-render.vercel.app/render?type=waving&color=005571&height=200&section=header&text=Agentic%20AI%20&%20Automation&fontSize=50&animation=fadeIn" width="100%" />
-</p>
 
 ## 📌 Project Overview
 Monitoring daily judicial updates is a manual bottleneck for legal-tech firms. This project provides an autonomous agentic solution that tracks legal trends, filters them for strategic value using LLMs, generates branded infographics, and handles social media distribution.
