@@ -1,0 +1,1095 @@
+{
+  "name": "Final Nyaay AI social media automation tool",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9,
+              "triggerAtMinute": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        592,
+        -960
+      ],
+      "id": "fbdeb114-fdec-43e6-bd17-846dd5335d31",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://news.google.com/rss/search?q=(legal+OR+law+OR+court+OR+justice+OR+rights)+AND+(data+OR+report+OR+statistic+OR+numbers+OR+figure+OR+pendency+OR+\"National+Judicial+Data+Grid\")+India&hl=en-IN&gl=IN&ceid=IN:en",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1552,
+        -960
+      ],
+      "id": "ff26bd9d-8a56-4443-a46e-a6099afb8acb",
+      "name": "HTTP Request",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.xml",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        -960
+      ],
+      "id": "6b336c72-c2d7-44c3-a650-3612e748a287",
+      "name": "XML"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "==You are the Head of Growth & Strategy for Nyaay AI (India's Next-Gen Legal Automation Platform).\n{{ $('Company profile').item.json.brand_profile }}\n\nYOUR BRAND VOICE:\n- Authority: We are the bridge between the Supreme Court and the Common Man.\n- Tech-Forward: We believe AI speeds up justice.\n- Simple: We explain \"Legalese\" in plain English/Hindi-English.\n- Neutral: We do NOT take political sides. We stick to the Constitution and Acts.\n\nYOUR PRODUCTS (Use these as solutions in your posts):\n1. **Court Automation:** Real-time transcription, Case Clustering, Automated Scheduling.\n2. **Lawyer Efficiency:** E-Filing Automation, Defect Analysis (fixing errors before rejection), Clause Extraction.\n3. **Legal Intelligence:** Judgment Prediction, Precedent Mapping, Live Case Law Updates.\n4. **Citizen Access:** Conversational AI Chatbots for simple legal help.\n\nINPUT DATA (Today's News - Parsed):\n\nHere is today’s news and market updates:\n{{ $node[\"clean news data\"].json.news.map(item => `• ${item.title}\\n  Link: ${item.url}`).join('\\n\\n') }}\n\n\n\n=You are the Head of Growth & Strategy for Nyaay AI (India's Next-Gen Legal Automation Platform).\n\n\n\nYOUR PRODUCTS (Use these as solutions in your posts):\n\n1. **Court Automation:** Real-time transcription, Case Clustering, Automated Scheduling[cite: 38, 39, 40].\n\n2. **Lawyer Efficiency:** E-Filing Automation, Defect Analysis (fixing errors before rejection), Clause Extraction[cite: 21, 23, 25].\n\n3. **Legal Intelligence:** Judgment Prediction, Precedent Mapping, Live Case Law Updates[cite: 28, 29, 30].\n\n4. **Citizen Access:** Conversational AI Chatbots for simple legal help.\n\n\n\nINPUT DATA (Today's News):\n\n{{ $node[\"clean news data\"].json.news.map(item => `• ${item.title}\\n  Link: ${item.url}`).join('\\n\\n') }}\n\n\n\n\n---------------------------------------------------\n\nTASK INSTRUCTIONS:\n\n1. **FILTER:** Scan the news for stories regarding:\n\n   - **Judicial Delays/Backlogs:** (Opportunity to pitch Case Clustering/Transcription).\n\n   - **New Laws (BNS/BNSS):** (Opportunity to pitch Compliance Monitoring/AI Updates).\n\n   - **Supreme Court Digital Initiatives:** (Opportunity to align Nyaay AI as a partner).\n\n   - **Corporate/Scam Legal Issues:** (Opportunity to pitch Defect Analysis/Risk Prediction).\n\n   - *IGNORE:* Purely political speeches, celebrity gossip, or local crime without legal significance.\n\n\n\n2. **TRANSFORM (The \"Tech Bridge\"):** - Don't just report the news. **Bridge it to a Nyaay AI solution.**\n\n   - *Bad:* \"The Supreme Court has 50,000 pending cases.\"\n\n   - *Good:* \"50,000 pending cases? This is exactly why Nyaay AI's 'Case Clustering' engine is essential for reducing judicial burden.\"\n\n\n\n3. **SELECT:** Pick the top 8 stories that allow us to position Nyaay AI as a **Thought Leader**.\n\n\n\n4. **OUTPUT:** Return a clean JSON object for each idea.\n\n---------------------------------------------------\n\n\n\nRESPONSE FORMAT (JSON ONLY, NO MARKDOWN):\n\n{\n\n  \"topics\": [\n\n    {\n\n      \"topic_title\": \"Short, Punchy Tech/Law Headline (Max 6 words)\",\n\n      \"topic_description\": \"2 sentences summarising the news event.\",\n\n      \"short_angle\": \"The 'Solution' Angle (e.g., 'How AI Prediction could have foreseen this' or 'Why E-Filing automation matters here').\",\n\n      \"platform_priority\": \"LinkedIn (for B2B/Lawyers) OR Instagram (for B2C/Awareness).\",\n\n      \"urgency\": \"High (Trending now) or Medium (Educational).\",\n\n      \"suggested_hook\": \"A provocative opening question or statement targeting lawyers/techies. (e.g., 'Is manual drafting killing your firm’s efficiency?')\",\n\n      \"reference_news_titles\": [\"Original News Headline\"]\n\n    }\n\n  ]\n\n}\n\n\n\n\n\nRESPONSE FORMAT:\n\nReturn ONLY:\n\n\n\n{\n\n  \"topics\": [\n\n    {\n\n      \"topic_title\": \"...\",\n\n      \"topic_description\": \"...\",\n\n      \"short_angle\": \"...\",\n\n      \"platform_priority\": \"...\",\n\n      \"urgency\": \"...\",\n\n      \"suggested_hook\": \"...\",\n\n      \"reference_news_titles\": [\"...\", \"...\"],\n\n      \"published_at\": \"........\"\n\n      \"reference_news_links\": [\"...\", \"...\"]\n\n    }\n\n  ]\n\n}\n\n\n\nNO text, NO explanations, NO markdown."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        2336,
+        -960
+      ],
+      "id": "e3d90d3b-ac93-46c0-ab4c-b20b21eb100a",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "klrLQsDaX1cknPwv",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Gemini returns JSON as a text string inside parts[0].text\nconst raw = $json.content.parts[0].text;\n\n// Remove unwanted ```json ... ``` formatting if present\nconst cleaned = raw.replace(/```json/gi, \"\").replace(/```/g, \"\").trim();\n\n// Parse the JSON text safely\nlet parsed;\ntry {\n  parsed = JSON.parse(cleaned);\n} catch (e) {\n  throw new Error(\"Failed to parse Gemini JSON: \" + e.message + \"\\nRaw: \" + cleaned);\n}\n\n// Return the parsed topics array\nreturn [\n  {\n    json: {\n      topics: parsed.topics\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2704,
+        -960
+      ],
+      "id": "d54723f6-bae6-4a08-a7c9-6cec59bfdbd6",
+      "name": "Parse Gemini Topics"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "955e9d61-edb3-45eb-816e-0c43c1a2d3b5",
+              "name": "company logo",
+              "value": "={{ $('Extract from File1').item.json.data }}",
+              "type": "string"
+            },
+            {
+              "id": "3dc1c4ff-fd5d-42c0-b4d6-3cfc3a3e2764",
+              "name": "topic",
+              "value": "={{ (() => { const topics = $('Parse Gemini Topics').item.json.topics || []; const n = $('Send message and wait for response2').item.json.data.topic_number || 1; const idx = Math.max(0, Math.min(topics.length - 1, Number(n) - 1)); const t = topics[idx] || {}; return t.topic_title; })() }}\n\n{{ (() => { const topics = $('Parse Gemini Topics').item.json.topics || []; const n = $('Send message and wait for response2').item.json.data.topic_number || 1; const idx = Math.max(0, Math.min(topics.length - 1, Number(n) - 1)); const t = topics[idx] || {}; return t.short_angle; })() }}\n\n\n",
+              "type": "string"
+            },
+            {
+              "id": "c28d9209-054f-4304-bf73-d88ef79816da",
+              "name": "short angle",
+              "value": "={{ (() => { const topics = $('Parse Gemini Topics').item.json.topics || []; const n = $('Send message and wait for response2').item.json.data.topic_number || 1; const idx = Math.max(0, Math.min(topics.length - 1, Number(n) - 1)); const t = topics[idx] || {}; return t.short_angle; })() }}",
+              "type": "string"
+            },
+            {
+              "id": "15d8a3b6-2693-410f-9de8-e0a4ffe2c132",
+              "name": "suggested hook",
+              "value": "={{ (() => { const topics = $('Parse Gemini Topics').item.json.topics || []; const n = $('Send message and wait for response2').item.json.data.topic_number || 1; const idx = Math.max(0, Math.min(topics.length - 1, Number(n) - 1)); const t = topics[idx] || {}; return t.suggested_hook; })() }}",
+              "type": "string"
+            },
+            {
+              "id": "f0ddf2cb-ce5f-450e-b94b-322467ea2153",
+              "name": "POV",
+              "value": "={{ $('Send message and wait for response2').item.json.data['Your POV about this topic ?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "84bbb753-b6d6-44e9-aff7-4993253727d9",
+              "name": "New link",
+              "value": "={{ (() => { const topics = $('Parse Gemini Topics').item.json.topics || []; const n = $('Send message and wait for response2').item.json.data.topic_number || 1; const idx = Math.max(0, Math.min(topics.length - 1, Number(n) - 1)); const t = topics[idx] || {}; return t.reference_news_links; })() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3392,
+        -960
+      ],
+      "id": "0fb5f371-a801-422c-9b1c-9aab08907876",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "text": "=Topic:  {{ $json.topic }} , {{ $('Send message and wait for response2').item.json.data['Your POV about this topic ?'] }}\n\n\nBased on this Topic Generate Perfect And Social Media Platform Based Captions in words. and size of caption should be {{ $('Send message and wait for response2').item.json.data['caption size (in words)'] }}\nwords. (I don't want that #line here I want #line in last only)\n\n(Give one line space here b/w caption and link)\nIn next line also mention news link and say read more here\n{{ $json['New link'] }}\n\n\n(Give onle line space here  b/w read more and #line)\nand give # line\n\nDon't use (*) this star symbol in the output.",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "Facebook Caption",
+              "description": "Caption for Facebook Post with proper Hashtags"
+            },
+            {
+              "name": "Instagram Caption",
+              "description": "Caption for Instagram post with proper Hashtags"
+            },
+            {
+              "name": "Linkedin Caption",
+              "description": "Caption for Linkedin Post with proper Hashtags"
+            },
+            {
+              "name": "X Tweet",
+              "description": "perfect Tweet in less than 280 Characters"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        3616,
+        -768
+      ],
+      "id": "93dac123-2512-49cc-906e-822dac3b7668",
+      "name": "Information Extractor"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        3856,
+        -560
+      ],
+      "id": "e92b9cc9-1106-4278-98f2-eb2912816ec4",
+      "name": "2.5 Flash1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "................",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $('Edit Fields').item.json.topic }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "Image Prompt",
+              "description": "=Create a PREMIUM HIGH-END CORPORATE INFOGRAPHIC for a modern legal-tech brand.\n\nCONTENT CONFIGURATION:\n- HEADLINE: \"{{ $('Edit Fields').item.json.topic }}\"\n- BODY CONTEXT: \"{{ $('Edit Fields').item.json['short angle'] }}\"\n- Hook: \"{{ $('Edit Fields').item.json['suggested hook'] }}\"\n\nDESIGN AESTHETIC:\n- STYLE: Modern Swiss-style graphic design. Minimalist, flat vector art with \"isoline\" or \"high-fidelity\" icon styles.\n- ATMOSPHERE: Authoritative, trustworthy, cutting-edge, and clean. \n- LAYOUT: Grid-based vertical layout with generous negative space (whitespace) to ensure a professional, uncluttered look.\n\nCOLOR PALETTE:\n- Background: Very pale, soft ice-blue (#F0F8FF) with an extremely faint, geometric data-stream pattern (5% opacity).\n- Primary Accents: Deep Corporate Maroon (#7A0010) for maximum contrast and authority.\n- Text: Sharp Dark Charcoal or Black (Sans-serif fonts only).\n\nCOMPOSITION INSTRUCTIONS:\n1. HEADER: The Headline must be in a bold, modern sans-serif typeface (like Roboto or Helvetica), colored Deep Maroon.\n2. HERO VISUAL (Center): Three sophisticated, uniform vector icons arranged horizontally. They must represent [Data Analysis], [Cyber Security], and [Legal Justice]. The icons should be sleek, two-tone (Maroon & Grey), and strictly 2D flat design.\n3. CONTENT AREA (Bottom): A structured text block or bulleted list visualizing the BODY CONTEXT. Use clear visual hierarchy.\n4. FOOTER: A solid, full-width Deep Maroon bar anchored at the bottom.\n\nTECHNICAL CONSTRAINTS:\n- Render text clearly and legibly. \n- NO 3D, NO shadows, NO gradients, NO photorealism.\n- Must resemble a high-quality PDF export from Adobe Illustrator.\n- Aspect Ratio: Vertical (Portrait)."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b81aa400-e203-4812-9379-98672df1791e",
+      "name": "Generate Image Prompt",
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        3968,
+        -768
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "shilpichadokarbussiness@gmail.com",
+        "subject": "=Approval for post",
+        "message": "=<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Social Media Captions</title>\n  <style>\n    /* Google Fonts */\n    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');\n\n    body {\n      font-family: 'Inter', sans-serif;\n      background: linear-gradient(135deg, #e0f7fa, #e3f2fd);\n      margin: 0;\n      padding: 20px;\n      display: flex;\n      justify-content: center;\n      align-items: center;\n      min-height: 100vh;\n    }\n\n    .container {\n      background: #fff;\n      padding: 40px;\n      border-radius: 20px;\n      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);\n      max-width: 850px;\n      width: 100%;\n      animation: fadeIn 0.8s ease-in-out;\n    }\n\n    h1 {\n      color: #0d47a1;\n      text-align: center;\n      margin-bottom: 35px;\n      font-size: 2.2rem;\n      font-weight: 700;\n      position: relative;\n    }\n\n    h1::after {\n      content: \"\";\n      width: 80px;\n      height: 4px;\n      background: #0d47a1;\n      display: block;\n      margin: 10px auto 0;\n      border-radius: 2px;\n    }\n\n    .section {\n      margin-bottom: 25px;\n      background: #f5f9ff;\n      border-left: 6px solid #0d47a1;\n      padding: 18px 20px;\n      border-radius: 12px;\n      transition: transform 0.2s ease, box-shadow 0.2s ease;\n    }\n\n    .section:hover {\n      transform: translateY(-3px);\n      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);\n    }\n\n    .section-title {\n      font-weight: 600;\n      font-size: 1.05rem;\n      color: #0d47a1;\n      margin-bottom: 8px;\n      display: flex;\n      align-items: center;\n      gap: 8px;\n    }\n\n    .section-title::before {\n      content: \"💡\";\n      font-size: 1.2rem;\n    }\n\n    p {\n      margin: 0;\n      line-height: 1.6;\n      color: #444;\n      font-size: 0.95rem;\n    }\n\n    .image-container {\n      text-align: center;\n      margin-top: 40px;\n      border-top: 2px dashed #bbb;\n      padding-top: 25px;\n    }\n\n    .image-container .section-title {\n      justify-content: center;\n      margin-bottom: 15px;\n    }\n\n    .image-container img {\n      max-width: 100%;\n      border-radius: 15px;\n      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);\n      transition: transform 0.3s ease;\n    }\n\n    .image-container img:hover {\n      transform: scale(1.03);\n    }\n\n    /* Animation */\n    @keyframes fadeIn {\n      from {\n        opacity: 0;\n        transform: translateY(15px);\n      }\n      to {\n        opacity: 1;\n        transform: translateY(0);\n      }\n    }\n  </style>\n</head>\n<body>\n\n<div class=\"container\">\n  <h1>✨ Social Media Content ✨</h1>\n\n  <div class=\"section\">\n    <div class=\"section-title\">Facebook Caption</div>\n    <p>{{ $('Information Extractor').item.json.output['Facebook Caption'] }}</p>\n  </div>\n\n  <div class=\"section\">\n    <div class=\"section-title\">Instagram Caption</div>\n    <p>{{ $('Information Extractor').item.json.output['Instagram Caption'] }}</p>\n  </div>\n\n  <div class=\"section\">\n    <div class=\"section-title\">LinkedIn Caption</div>\n    <p>{{ $('Information Extractor').item.json.output['Linkedin Caption'] }}</p>\n  </div>\n\n  <div class=\"section\">\n    <div class=\"section-title\">Tweet</div>\n    <p>{{ $('Information Extractor').item.json.output['X Tweet'] }}</p>\n  </div>\n\n\n<div class=\"image-container\">\n    <div class=\"section-title\">Generated Infographic</div>\n    <img src=\"{{ $('Image url').item.json.data.url }}\" alt=\"Generated Image\" style=\"width: 100%; max-width: 600px; height: auto; display: block;\">\n</div>\n</div>\n</body>\n</html>",
+        "responseType": "customForm",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Approved ",
+              "placeholder": "Y/N"
+            },
+            {
+              "fieldLabel": "Regenerate ",
+              "placeholder": "Y/N"
+            },
+            {
+              "fieldLabel": "Publish content to LinkedIn?",
+              "placeholder": "Y/N"
+            },
+            {
+              "fieldLabel": "Publish content to Instagram ?",
+              "placeholder": "Y/N"
+            },
+            {
+              "fieldLabel": "Publish content to Twitter ?",
+              "placeholder": "Y/N"
+            }
+          ]
+        },
+        "options": {
+          "limitWaitTime": {
+            "values": {
+              "resumeAmount": 10,
+              "resumeUnit": "minutes"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        5952,
+        -768
+      ],
+      "id": "4f920e59-557d-4a0e-8881-e1d71b3d65d6",
+      "name": "Send message and wait for response1",
+      "webhookId": "a08a476b-6a5e-49ab-a34a-08177483e29d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "EIxXrQeHOZZZgcDY",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. GET DATA SAFELY\nconst editFieldsData = $node[\"Edit Fields\"] ? $node[\"Edit Fields\"].json : {};\nlet imageData = editFieldsData['company logo']; // Corrected to use the logo property name from Edit Fields\nconst userTopicTitle = editFieldsData.topic; // Topic title and description are combined here in the n8n logic\nconst userShortAngle = editFieldsData['short angle']; // The specific 'solution' angle\nconst userSuggestedHook = editFieldsData['suggested hook'];\n\n// 2. DEFINE THE DYNAMIC CREATIVE BRIEF\n// This brief specifically references the visual style of the statistical infographic example provided in the previous turn.\nconst creativeBrief = `\n**STRICT GENERATION INSTRUCTIONS:**\nYou are a design assistant. Your task is to generate an infographic image for a social media post.\nThe final image MUST perfectly match the statistical, comparative layout shown in the most recent example image (the one with '45-60 Days' and '7-10 Days').\n\n**TOPIC CONTENT TO INFUSE:**\n- **Primary Topic:** ${userTopicTitle}\n- **Solution Angle:** ${userShortAngle}\n- **Target Hook:** ${userSuggestedHook}\n\n**VISUAL LAYOUT (STATISTICAL COMPARISON INFOGRAPHIC - MUST MATCH PROVIDED EXAMPLE):**\nThe layout MUST be structured as a professional comparison infographic, mirroring the style, color scheme, and blocks of the provided example image.\n\n1.  **HEADER/TITLE:**\n    * Large, bold title summarizing the **CHALLENGE** based on the news (e.g., 'GLOBAL SUPPLY CHAIN DISRUPTIONS').\n    * Sub-title for context: \"The AI Solution: Our Impact\" (or similar).\n\n2.  **MAIN COMPARISON (STATISTICAL BLOCK):**\n    * **LEFT SIDE (BEFORE Nyaay AI):** Represent the current **PROBLEM** (e.g., slow resolution time, high cost).\n        * Visual: A large, deep Maroon/Dark Red colored block/stylized circle containing text.\n        * Text: A key statistic representing the challenge (e.g., '45-60 Days Average Delay').\n    * **RIGHT SIDE (AFTER Nyaay AI):** Represent the **SOLUTION/IMPACT**.\n        * Visual: A large, clean Blue colored block/stylized circle showing a dramatic improvement.\n        * Text: A key metric showing the AI's impact (e.g., '7-10 Days Average Delay').\n\n3.  **SUB-COMPARISON (RESOLUTION TIME/COST):**\n    * Include a smaller, centered horizontal **Bar Chart comparison** underneath the main blocks, showing a metric like 'Resolution Time' or 'Cost' Before vs. After AI.\n    * Below the bar chart, include two smaller boxes: one Maroon, one Blue, with key percentage metrics (e.g., 'Time: -75% Faster', 'Operational Costs: -30% REDUCTION').\n\n4.  **BRANDING/STYLE:**\n    * **Logo:** The provided logo image MUST be placed clearly in the **top-left corner** without modification, next to the company name (e.g., 'Nyaay AI').\n    * **Colors:** Use the deep **Maroon/Dark Red** and clean **Blue** from the example image. Use White/Off-white for the background and text. Frame the entire infographic with a Maroon/Dark Red border.\n    * **Style:** Clean, professional, minimal shadows. **STATISTICAL/DATA-DRIVEN** look.\n\n**ABSOLUTE HARD NEGATIVE RULES:**\nThe image must NOT include ANY of the following: ✗ Pie Charts, ✗ Futuristic AI holograms, ✗ Tech grids, ✗ Circuit patterns, ✗ Robotic or AI symbols, ✗ 3D sci-fi visuals. Keep the style grounded in clean data visualization, strictly matching the latest provided example.\n`;\n\n// 3. CONSTRUCT THE REQUEST PARTS\nconst parts = [];\n\n// A. Add the Text Prompt Part (Always required)\nparts.push({\n    text: creativeBrief\n});\n\n// B. Handle the Image (Logo) - Only add if valid data exists\nif (imageData && typeof imageData === 'string' && imageData.length > 100) {\n    // Clean the Base64 string (Remove header if present)\n    let cleanBase64 = imageData;\n    // Check for both common data URI formats and remove the header\n    if (imageData.includes(\",\")) {\n        cleanBase64 = imageData.substring(imageData.indexOf(',') + 1);\n    }\n\n    // Add Image Part\n    parts.push({\n        inline_data: {\n            // The file type is assumed to be PNG based on the previous node/setup.\n            mime_type: \"image/png\",\n            data: cleanBase64 // PURE base64 data\n        }\n    });\n}\n\n// 4. BUILD FINAL REQUEST BODY\nconst requestBody = {\n    contents: [\n        {\n            parts: parts\n        },\n    ],\n    generationConfig: {\n        responseModalities: [\"IMAGE\"],\n        imageConfig: {\n            // Keep 1:1 for a strong, data-heavy infographic post for social media.\n            aspectRatio: \"1:1\", \n        },\n    },\n};\n\n// 5. RETURN TO N8N\nreturn [\n    { json: requestBody },\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4544,
+        -768
+      ],
+      "id": "d883e184-5db4-4282-a26d-fdca0b61eda2",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst lastItem = items[items.length - 1];\nconst base64Data =\n  lastItem?.json?.candidates[0]?.content?.parts?.slice(-1)[0]?.inlineData?.data;\n\nreturn { base64Data } ;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4992,
+        -768
+      ],
+      "id": "d8d37b16-12b4-48ac-a37b-b142e69e9938",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0621ef16-af53-44bd-99a8-f5d116c644a8",
+              "name": "Image64String ",
+              "value": "={{ $json.base64Data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        5216,
+        -768
+      ],
+      "id": "76f8cd42-4f94-4bc3-ac46-384f554976ba",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "Image64String ",
+        "binaryPropertyName": "GoogleCreatedImage",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        5440,
+        -768
+      ],
+      "id": "aba2c4f9-1a94-4202-b55d-cbe643584d78",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-goog-api-key",
+              "value": "............................................"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        4768,
+        -768
+      ],
+      "id": "02fe09d4-c80b-4d80-91c6-00eb57cd8371",
+      "name": "Nano Bananna Image generation"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6d8b8eab-1d47-49da-91ad-1d6354bf69a0",
+              "name": "prompt ",
+              "value": "={{ $json.output['Image Prompt'] }} ",
+              "type": "string"
+            },
+            {
+              "id": "789ed965-bfc7-4949-a749-2b986edff410",
+              "name": "Image",
+              "value": "={{ $('Edit Fields').item.json['company logo'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4320,
+        -768
+      ],
+      "id": "2ab3ff51-a390-4911-8328-c59f3527e818",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5de2f878-cbbd-4ed0-8fb7-cf56feec0050",
+              "name": "brand_profile",
+              "value": "IDENTITY:\nNyaay AI is India's \"Next-Gen Legal Automation\" platform. We do not just simplify law; we engineer the future of justice. We are the critical infrastructure that powers Supreme Courts, High Courts, and top Law Firms, helping them turn \"fragmentation into flow\" using AI .\n\nMISSION:\nTo revolutionize the Indian Justice System. We replace manual bottlenecks (like e-filing errors, case scheduling, and lengthy judgment reading) with intelligent automation. We make justice faster, smarter, and accessible.\n\nTARGET AUDIENCE & PAIN POINTS:\n1. Legal Professionals (Lawyers/Firms): Struggling with drafting delays, finding precedents, and filing defects.\n2. The Judiciary (Courts/Judges): Overwhelmed by case backlogs and manual scheduling.\n3. The Common Citizen (Litigants): Confused by complex procedures and lack of transparency.\n\nTONE OF VOICE:\n- \"Precision-Driven\": We speak with the accuracy of a machine and the wisdom of a judge.\n- Futurist: We constantly highlight how \"AI is solving the backlog\" (e.g., Real-time Transcription, Precedent Mapping).\n- Empowering: We make the law transparent for the common man.\n\nCONTENT PILLARS (What we talk about):\n1. \"The Automated Lawyer\": How tools like 'Defect Analysis' and 'Clause Extraction' save hours of manual work.\n2. \"Smarter Courts\": Promoting features like 'Case Clustering' and 'Real-time Transcription' to reduce pendency.\n3. \"Predictive Justice\": Using data to forecast case outcomes and assess risk.\n4. \"Citizen Access\": Explaining legal rights using our 'Conversational AI' angle (simplifying complexity).\n\nSTRICT GUIDELINES:\n- Position Nyaay AI as a \"Solution,\" not just a media outlet.\n- When discussing news (e.g., a new Supreme Court judgment), mention how *technology* could help implement it.\n- No political bias. Focus on \"Process efficiency\" over \"Political opinion.\"",
+              "type": "string"
+            },
+            {
+              "id": "d59b54e1-432e-47fd-9941-b50f2fecf295",
+              "name": "Company_logo",
+              "value": "https://drive.google.com/uc?id=1BPG8Gx-cq_JlbZ15VhJ5MYGOCeKmidZN",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        832,
+        -960
+      ],
+      "id": "ee66e0c9-338b-4784-a861-c44d7055885f",
+      "name": "Company profile"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "shilpichadokarbussiness@gmail.com",
+        "subject": "=Today’s AI Topic Suggestions – {{ $now.toISO().slice(0,10) }}",
+        "message": "=<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>Today's AI Topic Suggestions</title>\n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');\n\n    body {\n      font-family: 'Inter', sans-serif;\n      background: #f4f6fb;\n      margin: 0;\n      padding: 24px;\n    }\n\n    .container {\n      background: #ffffff;\n      max-width: 900px;\n      margin: 0 auto;\n      padding: 32px 28px;\n      border-radius: 18px;\n      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);\n    }\n\n    h1 {\n      color: #0d47a1;\n      text-align: center;\n      margin-bottom: 24px;\n      font-size: 1.9rem;\n      font-weight: 700;\n    }\n\n    h1::after {\n      content: \"\";\n      width: 80px;\n      height: 3px;\n      background: #0d47a1;\n      display: block;\n      margin: 10px auto 0;\n      border-radius: 2px;\n    }\n\n    .intro {\n      font-size: 0.98rem;\n      color: #444;\n      margin-bottom: 24px;\n      line-height: 1.6;\n    }\n\n    .topic {\n      background: #f5f9ff;\n      border-left: 5px solid #0d47a1;\n      border-radius: 12px;\n      padding: 16px 18px;\n      margin-bottom: 16px;\n    }\n\n    .topic-title {\n      font-weight: 600;\n      color: #0d47a1;\n      margin-bottom: 6px;\n      font-size: 1rem;\n    }\n\n    .topic-meta {\n      font-size: 0.9rem;\n      color: #555;\n      line-height: 1.5;\n    }\n\n    .topic-meta b {\n      color: #222;\n    }\n\n    .footer-note {\n      margin-top: 24px;\n      font-size: 0.9rem;\n      color: #555;\n    }\n  </style>\n</head>\n<body>\n<div class=\"container\">\n  <h1>🔥 Today’s AI Topic Suggestions</h1>\n\n   <p class=\"intro\">\n    Hello Team,<br>\n    Here are today's <b>content ideas</b>, sourced from the latest news and filtered for Nyaay AI’s mission to simplify law for the common person. We've included a short description and a suggested angle for each.\n  </p>\n\n  <!-- Topic 1 -->\n  <div class=\"topic\">\n    <div class=\"topic-title\">\n      1. {{ $('Parse Gemini Topics').item.json.topics[0].topic_title }}\n    </div>\n    <div class=\"topic-meta\">\n    <b>Description:</b> {{ $('Parse Gemini Topics').item.json.topics[0].topic_description}}<br>\n      <b>Angle:</b> {{ $('Parse Gemini Topics').item.json.topics[0].short_angle }}<br>\n      <b>Platforms:</b> {{ $('Parse Gemini Topics').item.json.topics[0].platform_priority }}<br>\n      <b>Urgency:</b> {{ $('Parse Gemini Topics').item.json.topics[0].urgency }}<br>\n      <b>Hook:</b> {{ $('Parse Gemini Topics').item.json.topics[0].suggested_hook }}<br>\n      <b>News_Published_at:</b>\n        {{ $('Parse Gemini Topics').item.json.topics[0].published_at}}<br>\n      <b>News basis:</b>\n      {{ $('Parse Gemini Topics').item.json.topics[0].reference_news_titles.join(', ') }}<br>\n       <b>News link:</b>\n      {{ $('Parse Gemini Topics').item.json.topics[0].reference_news_links[0] }}\n\n    </div>\n  </div>\n\n  <!-- Topic 2 -->\n  <div class=\"topic\">\n    <div class=\"topic-title\">\n      2. {{ $('Parse Gemini Topics').item.json.topics[1].topic_title }}\n    </div>\n    <div class=\"topic-meta\">\n     <b>Description:</b> {{ $('Parse Gemini Topics').item.json.topics[1].topic_description}}<br>\n      <b>Angle:</b> {{ $('Parse Gemini Topics').item.json.topics[1].short_angle }}<br>\n      <b>Platforms:</b> {{ $('Parse Gemini Topics').item.json.topics[1].platform_priority }}<br>\n      <b>Urgency:</b> {{ $('Parse Gemini Topics').item.json.topics[1].urgency }}<br>\n      <b>Hook:</b> {{ $('Parse Gemini Topics').item.json.topics[1].suggested_hook }}<br>\n      <b>News_Published_at:</b>\n        {{ $('Parse Gemini Topics').item.json.topics[1].published_at}}<br>\n      <b>News basis:</b>\n      {{ $('Parse Gemini Topics').item.json.topics[1].reference_news_titles.join(', ') }}<br>\n       <b>News link:</b>\n      {{ $('Parse Gemini Topics').item.json.topics[1].reference_news_links[0] }}\n    </div>\n  </div>\n\n  <!-- Topic 3 -->\n  <div class=\"topic\">\n    <div class=\"topic-title\">\n      3. {{ $('Parse Gemini Topics').item.json.topics[2].topic_title }}\n    </div>\n    <div class=\"topic-meta\">\n     <b>Description:</b> {{ $('Parse Gemini Topics').item.json.topics[2].topic_description}}<br>\n      <b>Angle:</b> {{ $('Parse Gemini Topics').item.json.topics[2].short_angle }}<br>\n      <b>Platforms:</b> {{ $('Parse Gemini Topics').item.json.topics[2].platform_priority }}<br>\n      <b>Urgency:</b> {{ $('Parse Gemini Topics').item.json.topics[2].urgency }}<br>\n      <b>Hook:</b> {{ $('Parse Gemini Topics').item.json.topics[2].suggested_hook }}<br>\n       <b>News_Published_at:</b>\n        {{ $('Parse Gemini Topics').item.json.topics[2].published_at}}<br>\n      <b>News basis:</b>\n      {{ $('Parse Gemini Topics').item.json.topics[2].reference_news_titles.join(', ') }}<br>\n       <b>News link:</b>\n      {{ $('Parse Gemini Topics').item.json.topics[2].reference_news_links[0] }}\n    </div>\n  </div>\n\n  <!-- Topic 4 -->\n  <div class=\"topic\">\n    <div class=\"topic-title\">\n      4. {{ $('Parse Gemini Topics').item.json.topics[3].topic_title }}\n    </div>\n    <div class=\"topic-meta\">\n    <b>Description:</b> {{ $('Parse Gemini Topics').item.json.topics[3].topic_description}}<br>\n      <b>Angle:</b> {{ $('Parse Gemini Topics').item.json.topics[3].short_angle }}<br>\n      <b>Platforms:</b> {{ $('Parse Gemini Topics').item.json.topics[3].platform_priority }}<br>\n      <b>Urgency:</b> {{ $('Parse Gemini Topics').item.json.topics[3].urgency }}<br>\n      <b>Hook:</b> {{ $('Parse Gemini Topics').item.json.topics[3].suggested_hook }}<br>\n      <b>News_Published_at:</b>\n        {{ $('Parse Gemini Topics').item.json.topics[3].published_at}}<br>\n      <b>News basis:</b>\n      {{ $('Parse Gemini Topics').item.json.topics[3].reference_news_titles.join(', ') }}<br>\n       <b>News link:</b>\n      {{ $('Parse Gemini Topics').item.json.topics[3].reference_news_links[0] }}\n    </div>\n  </div>\n\n  <!-- Topic 5 -->\n  <div class=\"topic\">\n    <div class=\"topic-title\">\n      5. {{ $('Parse Gemini Topics').item.json.topics[4].topic_title }}\n    </div>\n    <div class=\"topic-meta\">\n    <b>Description:</b> {{ $('Parse Gemini Topics').item.json.topics[4].topic_description}}<br>\n      <b>Angle:</b> {{ $('Parse Gemini Topics').item.json.topics[4].short_angle }}<br>\n      <b>Platforms:</b> {{ $('Parse Gemini Topics').item.json.topics[4].platform_priority }}<br>\n      <b>Urgency:</b> {{ $('Parse Gemini Topics').item.json.topics[4].urgency }}<br>\n      <b>Hook:</b> {{ $('Parse Gemini Topics').item.json.topics[4].suggested_hook }}<br>\n      <b>News_Published_at:</b>\n        {{ $('Parse Gemini Topics').item.json.topics[4].published_at}}<br>\n      <b>News basis:</b>\n      {{ $('Parse Gemini Topics').item.json.topics[4].reference_news_titles.join(', ') }}<br>\n       <b>News link:</b>\n      {{ $('Parse Gemini Topics').item.json.topics[4].reference_news_links[0] }}\n    </div>\n  </div>\n\n  <!-- Topic 6 -->\n  <div class=\"topic\">\n    <div class=\"topic-title\">\n      6. {{ $('Parse Gemini Topics').item.json.topics[5].topic_title }}\n    </div>\n    <div class=\"topic-meta\">\n    <b>Description:</b> {{ $('Parse Gemini Topics').item.json.topics[5].topic_description}}<br>\n      <b>Angle:</b> {{ $('Parse Gemini Topics').item.json.topics[5].short_angle }}<br>\n      <b>Platforms:</b> {{ $('Parse Gemini Topics').item.json.topics[5].platform_priority }}<br>\n      <b>Urgency:</b> {{ $('Parse Gemini Topics').item.json.topics[5].urgency }}<br>\n      <b>Hook:</b> {{ $('Parse Gemini Topics').item.json.topics[5].suggested_hook }}<br>\n      <b>News_Published_at:</b>\n        {{ $('Parse Gemini Topics').item.json.topics[5].published_at}}<br>\n      <b>News basis:</b>\n      {{ $('Parse Gemini Topics').item.json.topics[5].reference_news_titles.join(', ') }}<br>\n       <b>News link:</b>\n      {{ $('Parse Gemini Topics').item.json.topics[5].reference_news_links[0] }}\n    </div>\n  </div>\n\n  <!-- Topic 7 -->\n  <div class=\"topic\">\n    <div class=\"topic-title\">\n      7. {{ $('Parse Gemini Topics').item.json.topics[6].topic_title }}\n    </div>\n    <div class=\"topic-meta\">\n     <b>Description:</b> {{ $('Parse Gemini Topics').item.json.topics[6].topic_description}}<br>\n      <b>Angle:</b> {{ $('Parse Gemini Topics').item.json.topics[6].short_angle }}<br>\n      <b>Platforms:</b> {{ $('Parse Gemini Topics').item.json.topics[6].platform_priority }}<br>\n      <b>Urgency:</b> {{ $('Parse Gemini Topics').item.json.topics[6].urgency }}<br>\n      <b>Hook:</b> {{ $('Parse Gemini Topics').item.json.topics[6].suggested_hook }}<br>\n      <b>News_Published_at:</b>\n        {{ $('Parse Gemini Topics').item.json.topics[6].published_at}}<br>\n      <b>News basis:</b>\n      {{ $('Parse Gemini Topics').item.json.topics[6].reference_news_titles.join(', ') }}<br>\n       <b>News link:</b>\n      {{ $('Parse Gemini Topics').item.json.topics[6].reference_news_links[0] }}\n    </div>\n  </div>\n\n\n  <p class=\"footer-note\">\n    Reply to this email with the <b>topic number or title</b> you want to turn into a full post\n    and your automation can pick it up for caption + image generation.\n  </p>\n</div>\n</body>\n</html>\n",
+        "responseType": "customForm",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "topic_number",
+              "placeholder": "Enter topic number (1-8)",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Your POV about this topic ?"
+            },
+            {
+              "fieldLabel": "caption size (in words)",
+              "placeholder": "in 100,200,250"
+            }
+          ]
+        },
+        "options": {
+          "responseFormDescription": "We will be back in your inbox shortly with a Final Approval email containing the complete post content and image preview.",
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2944,
+        -960
+      ],
+      "id": "5022b5f1-3c7c-42bb-85fe-4ab54bba39eb",
+      "name": "Send message and wait for response2",
+      "webhookId": "f0eb500a-1698-4b3c-b35b-d2f07bcf3238",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "EIxXrQeHOZZZgcDY",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parsed JSON output directly from XML node\nconst parsed = $json;\n\n// 1. Get channel object: Safely access 'channel' property of 'rss', handling if it's an array.\nlet channel = parsed?.rss?.channel;\nif (Array.isArray(channel)) {\n  channel = channel[0];\n}\n\n// 2. Get items (news articles): Safely access 'item' property.\nconst items = channel?.item || [];\n\n// 3. Process items\nconst top = items.slice(0, 10).map(i => {\n    // Helper function to safely extract the first element of a potentially nested array\n    const getValue = (field) => Array.isArray(field) ? field[0] : field || \"\";\n\n    return {\n        // News Title: Accessing the first element if 'title' is an array\n        title: getValue(i.title),\n\n        // News Link (URL): Accessing the first element if 'link' is an array\n        url: getValue(i.link),\n\n        // News Publication Date: Accessing the first element if 'pubDate' is an array\n        publishedAt: getValue(i.pubDate),\n\n        // Description: Accessing the first element if 'description' is an array\n        description: getValue(i.description)\n    };\n});\n\n// 4. Return the structured JSON\nreturn [\n  {\n    // The key is 'news', containing the array of simplified items\n    json: { news: top }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2080,
+        -960
+      ],
+      "id": "7049af67-73bd-43be-9f39-0b30a387b03e",
+      "name": "clean news data"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nconst updatedItems = items.map((item) => {\n  // Check if the 'captions' field exists and is a string\n  if (item.json.captions && typeof item.json.captions === 'string') {\n    // 1. Target: \\n (the actual newline character)\n    // 2. Replacement: \\\\n (the literal backslash followed by 'n')\n    // The 'g' flag ensures ALL occurrences are replaced.\n    item.json.captions = item.json.captions.replace(/\\n/g, '\\\\n');\n  }\n  \n  return item;\n});\n\nreturn updatedItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6512,
+        -528
+      ],
+      "id": "02bfc2c1-dcdb-45e3-b8d7-75a73ee606a3",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.imgbb.com/1/upload",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "expiration",
+              "value": "600"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "GoogleCreatedImage"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        5664,
+        -768
+      ],
+      "id": "1727cc5b-b0ce-4f5d-9458-b7b2a1510cbc",
+      "name": "Image url",
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "hyrMbSzIVPJqjQPU",
+          "name": "Imgbb"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Image url').item.json.data.url }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        6752,
+        -448
+      ],
+      "id": "a73f3299-6657-47bb-a88e-42411518243e",
+      "name": "Image Download2"
+    },
+    {
+      "parameters": {
+        "authentication": "communityManagement",
+        "postAs": "organization",
+        "organization": "99865872",
+        "text": "={{ $('Information Extractor').item.json.output['Linkedin Caption'] }}",
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        6976,
+        -416
+      ],
+      "id": "37a1289a-8e72-4863-b433-3244d11bd779",
+      "name": "SheEO LinkedIn post",
+      "credentials": {
+        "linkedInCommunityManagementOAuth2Api": {
+          "id": "Ok4rvRQjQNEz6lLT",
+          "name": "SheEo LinkedIn credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.data['Approved '] }}",
+                    "rightValue": "Y",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "36244d46-7d7f-4fd2-9023-bfac55d6fc13"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Approved"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "7b03acd8-46d3-44a6-a7e2-479b392a3b63",
+                    "leftValue": "={{ $json.data['Approved '] }}",
+                    "rightValue": "Y",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEquals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Regenerate "
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e7b40816-5693-470f-a579-c353869fead6",
+                    "leftValue": "={{ $json.data['Regenerate '] }}",
+                    "rightValue": "Y",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Regenerate "
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d8b18f35-7822-4b76-b6da-0bbe0e0ff2dc",
+                    "leftValue": "={{ $json.data['Regenerate '] }}",
+                    "rightValue": "Y",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEquals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Approved"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "1ce6aa5d-edbf-40bf-bbf8-7c0816b66388",
+                    "leftValue": "={{ $json.data['Publish content to LinkedIn?'] }}",
+                    "rightValue": "Y",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Approved"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        6192,
+        -816
+      ],
+      "id": "90cb5ba1-65e1-4cee-93ab-e61702504d35",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.Company_logo }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "file",
+              "outputPropertyName": "logo_binary"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1088,
+        -960
+      ],
+      "id": "ebb1d275-09b7-4c7e-b6fc-f17fc090b05d",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "binaryPropertyName": "logo_binary",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        1344,
+        -960
+      ],
+      "id": "a097629c-0ebc-4206-9af5-5ca53aa2fb01",
+      "name": "Extract from File1"
+    }
+  ],
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2025-12-15T09:01:58.009+05:30",
+          "Readable date": "December 15th 2025, 9:01:58 am",
+          "Readable time": "9:01:58 am",
+          "Day of week": "Monday",
+          "Year": "2025",
+          "Month": "December",
+          "Day of month": "15",
+          "Hour": "09",
+          "Minute": "01",
+          "Second": "58",
+          "Timezone": "Asia/Calcutta (UTC+05:30)"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Company profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "XML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "XML": {
+      "main": [
+        [
+          {
+            "node": "clean news data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Parse Gemini Topics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Gemini Topics": {
+      "main": [
+        [
+          {
+            "node": "Send message and wait for response2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "Generate Image Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2.5 Flash1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Generate Image Prompt",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response1": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Nano Bananna Image generation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Image url",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Nano Bananna Image generation": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image Prompt": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Company profile": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "clean news data": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "Image Download2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image url": {
+      "main": [
+        [
+          {
+            "node": "Send message and wait for response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Download2": {
+      "main": [
+        [
+          {
+            "node": "SheEO LinkedIn post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [],
+        []
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Extract from File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d99f194e-de2c-4815-a992-4c01185dceb9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7a2296f05e4d6facf3e0b69009ed6ce0700276e8b8ab6907a3826f8f7d5ee877"
+  },
+  "id": "mR3ojy1eLfQC3gMK",
+  "tags": []
+}
